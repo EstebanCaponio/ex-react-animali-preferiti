@@ -15,33 +15,64 @@
 
         const { useState } = React;
 
+        function Modal({
+            title,
+            content,
+            show = false,
+            onClose = () => { },
+            onConfirm = () => { }
+        }) {
+            return show && ReactDOM.createPortal(
+                <div className="modal-container">
+                    <div className="modal">
+                        <h2>{title}</h2>
+                        <p>{content}</p>
+                        <div>
+                            <button onClick={onClose}>Annulla</button>
+                            <button onClick={onConfirm}>Conferma</button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )
+        }
+
         const ListAnimals = () => {
 
             const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
 
             const [animals, setAnimals] = useState([]);
+            const [show, setShow] = useState(false);
+            const [input, setInput] = useState('');
 
             const addAnimal = () => {
 
-                const availableAnimals = animalsChoices.filter(
-                    choice => !animals.includes(choice)
-                );
+                if (!input) return;
+                setAnimals(arr => [...arr, input]);
+                setInput('');
+                setShow(false);
 
-                if (availableAnimals.length === 0) {
-                    console.warn("Tutti gli animali unici sono già stati aggiunti!");
-                    return;
-                }
 
-                const iRandom = Math.floor(Math.random() * availableAnimals.length);
 
-                const animalToAdd = availableAnimals[iRandom];
+                // const availableAnimals = animalsChoices.filter(
+                //     choice => !animals.includes(choice)
+                // );
 
-                setAnimals(arr => [...arr, animalToAdd]);
+                // if (availableAnimals.length === 0) {
+                //     console.warn("Tutti gli animali unici sono già stati aggiunti!");
+                //     return;
+                // }
+
+                // const iRandom = Math.floor(Math.random() * availableAnimals.length);
+
+                // const animalToAdd = availableAnimals[iRandom];
+
+                // setAnimals(arr => [...arr, animalToAdd]);
             }
 
             return (
                 <>
-                    <button onClick={addAnimal}>Aggiungi Animale</button>
+                    <button onClick={() => setShow(true)}>Aggiungi Animale</button>
                     <details>
                         <summary>Animali</summary>
                         <ul>
@@ -50,6 +81,19 @@
                             ))}
                         </ul>
                     </details>
+                    <Modal
+                        show={show}
+                        onClose={() => setShow(false)}
+                        onConfirm={addAnimal}
+                        title='Inserisci un animale'
+                        content={
+                            <input
+                                type='text'
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                            />
+                        }
+                    />
                 </>
             )
         };
