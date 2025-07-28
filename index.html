@@ -12,19 +12,45 @@
 
 
     <script type="text/babel">
+
+        const { useState } = React;
+
         const ListAnimals = () => {
 
-            const animals = ['Lupo', 'Orso', 'Aquila'];
+            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
+
+            const [animals, setAnimals] = useState([]);
+
+            const addAnimal = () => {
+
+                const availableAnimals = animalsChoices.filter(
+                    choice => !animals.includes(choice)
+                );
+
+                if (availableAnimals.length === 0) {
+                    console.warn("Tutti gli animali unici sono già stati aggiunti!");
+                    return;
+                }
+
+                const iRandom = Math.floor(Math.random() * availableAnimals.length);
+
+                const animalToAdd = availableAnimals[iRandom];
+
+                setAnimals(arr => [...arr, animalToAdd]);
+            }
 
             return (
-                <details>
-                    <summary>Animali</summary>
-                    <ul>
-                        {animals.map((a, i) => (
-                            <li key={i}>{a}</li>
-                        ))}
-                    </ul>
-                </details>
+                <>
+                    <button onClick={addAnimal}>Aggiungi Animale</button>
+                    <details>
+                        <summary>Animali</summary>
+                        <ul>
+                            {animals.map((a, i) => (
+                                <li key={i}>{a}</li>
+                            ))}
+                        </ul>
+                    </details>
+                </>
             )
         };
     </script>
